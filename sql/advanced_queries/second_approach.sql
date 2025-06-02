@@ -1,0 +1,144 @@
+-- Crea un trigger que registre en una tabla de monitoreo cada vez que un producto supere las 200.000 unidades vendidas acumuladas.
+
+-- El trigger debe activarse después de insertar una nueva venta y registrar en la tabla el ID del producto, su nombre, 
+-- la nueva cantidad total de unidades vendidas, y la fecha en que se superó el umbral.
+DROP TABLE IF EXISTS monitoreo;
+CREATE TABLE monitoreo (
+  -- id INT AUTO_INCREMENT PRIMARY KEY,
+  ProductID INT PRIMARY KEY,
+  ProductName VARCHAR(255),
+  total_vendido INT,
+  fecha DATETIME
+);
+
+-- EN REALIDAD DEBERIA CREAR UNA VISTA CON LOS PRODUCTOS QUE SUPERARON LOS 200K Y OBTENER DE AHI LOS DATOS
+
+DELIMITER //
+CREATE TRIGGER supera_200k_tr
+AFTER INSERT ON sales
+FOR EACH ROW
+BEGIN
+	DECLARE CANTIDAD_MINIMA INT;
+    DECLARE CANTIDAD_VENDIDA INT;
+    DECLARE PRODUCT_NAME VARCHAR(255);
+    SET CANTIDAD_MINIMA = 200000;
+	SELECT SUM(QUANTITY) INTO CANTIDAD_VENDIDA FROM SALES WHERE PRODUCTID = NEW.PRODUCTID GROUP BY PRODUCTID;
+    SELECT ProductName INTO PRODUCT_NAME FROM PRODUCTS WHERE PRODUCTID = NEW.PRODUCTID;
+	IF (CANTIDAD_VENDIDA >= CANTIDAD_MINIMA) THEN
+		IF EXISTS (SELECT 1 FROM monitoreo WHERE ProductID = NEW.PRODUCTID) THEN
+			UPDATE monitoreo SET total_vendido = CANTIDAD_VENDIDA, fecha = NEW.SalesDate WHERE ProductID = NEW.PRODUCTID;
+		ELSE
+			INSERT INTO monitoreo (ProductID, ProductName, total_vendido, fecha)
+            VALUES (NEW.PRODUCTID, PRODUCT_NAME, CANTIDAD_VENDIDA, NEW.SalesDate);
+		END IF;
+	END IF;
+END; //
+DELIMITER ;
+
+DROP TRIGGER supera_200k_tr;
+SELECT * FROM monitoreo;
+SELECT * FROM SALES;
+
+CREATE TABLE sales (
+  SalesID INT PRIMARY KEY,
+  SalesPersonID INT,
+  CustomerID INT,
+  ProductID INT,
+  Quantity INT,
+  Discount DECIMAL(4,2),
+  TotalPrice DECIMAL(10,2),
+  SalesDate DATETIME,
+  TransactionNumber VARCHAR(50)
+);
+
+SELECT MAX(SalesID) FROM sales;
+
+/*
+INSERT INTO SALES 
+-- VALUES (6758126,1,1,1,200001,1,1,NOW(),'???????????')
+-- VALUES (6758127,1,1,1,200001,1,1,NOW(),'???????????')
+VALUES (6758128,1,1,1,200001,1,1,NOW(),'???????????');
+*/
+
+/*
+DELETE FROM SALES
+WHERE SalesID IN (6758126,6758127,6758128);
+*/
+
+SELECT COUNT(*) FROM SALES;
+-- 6758128
+-- 6758125
+
+
+-- Registra una venta correspondiente al vendedor con ID 9, al cliente con ID 84, del producto con ID 103, por una cantidad de 1.876 unidades y un valor de 1200 unidades.
+
+-- Consulta la tabla de monitoreo, toma captura de los resultados y realiza un análisis breve de lo ocurrido.
+SELECT * FROM sales;
+
+SET @NEXT_SALESID = SELECT MAX(SalesID) +1 FROM SALES;
+SELECT SUM(QUANTITY) FROM SALES WHERE PRODUCTID = 103 GROUP BY PRODUCTID;
+
+SELECT * FROM SALES WHERE SALESID = 6758126;
+
+DELETE FROM SALES WHERE SALESID = 6758126;
+
+SET @NEXT_SALESID = (SELECT MAX(SalesID) +1 FROM SALES);
+INSERT INTO sales (SalesID,SalesPersonID,CustomerID,ProductID,Quantity,TotalPrice,SalesDate)
+-- VALUES (@NEXT_SALESID,9,84,103,1876,1200,NOW());
+VALUES (6758126,9,84,103,1876,1200,NOW());
+
+
+CREATE TABLE sales (
+  SalesID INT PRIMARY KEY,
+  SalesPersonID INT,
+  CustomerID INT,
+  ProductID INT,
+  Quantity INT,
+  Discount DECIMAL(4,2),
+  TotalPrice DECIMAL(10,2),
+  SalesDate DATETIME,
+  TransactionNumber VARCHAR(50)
+);
+
+
+SELECT SUM(QUANTITY) FROM SALES WHERE PRODUCTID = 103 GROUP BY PRODUCTID;
+
+
+
+-- Selecciona dos consultas del avance 1 y crea los índices que consideres más adecuados para optimizar su ejecución.
+
+-- Prueba con índices individuales y compuestos, según la lógica de cada consulta. 
+-- Luego, vuelve a ejecutar ambas consultas y compara los tiempos de ejecución antes y después de aplicar los índices. 
+-- Finalmente, describe brevemente el impacto que tuvieron los índices en el rendimiento y en qué tipo de columnas resultan más efectivos para este tipo de operaciones.
+
+CREATE INDEX idx_productid ON SALES(productid);
+DROP INDEX idx_productid ON SALES;
+
+WITH PRODUCTOS_MAS_VENDIDOS AS (
+SELECT PRODUCTID,SUM(QUANTITY) CANTIDAD_TOTAL FROM SALES
+GROUP BY PRODUCTID
+ORDER BY 2 DESC
+LIMIT 5
+),
+VENDEDORES_POR_PRODUCTO AS (
+SELECT PRODUCTID, SALESPERSONID, SUM(QUANTITY) CANTIDAD_VENDIDA FROM SALES
+GROUP BY PRODUCTID, SALESPERSONID
+ORDER BY PRODUCTID, SALESPERSONID
+)
+
+SELECT RANK() OVER(ORDER BY CANTIDAD_TOTAL DESC) RANKING,
+VP.PRODUCTID, CANTIDAD_TOTAL, SALESPERSONID, CANTIDAD_VENDIDA,
+COUNT(SALESPERSONID) OVER (PARTITION BY SALESPERSONID) MAYOR_VENTAS,
+ROUND((CANTIDAD_VENDIDA / CANTIDAD_TOTAL)*100,2) AS P_VENTAS
+FROM PRODUCTOS_MAS_VENDIDOS PV
+INNER JOIN VENDEDORES_POR_PRODUCTO VP
+ON PV.PRODUCTID = VP.PRODUCTID
+WHERE CANTIDAD_VENDIDA = (SELECT MAX(CANTIDAD_VENDIDA) FROM VENDEDORES_POR_PRODUCTO WHERE PRODUCTID = PV.PRODUCTID)
+ORDER BY CANTIDAD_TOTAL DESC;
+-- SIN INDEX: 20.203
+-- CON INDEX PRODUCTID: MAS DE 30 SEG -> ERROR
+-- ----------------------------------------------------------------------------------------
+
+
+
+
