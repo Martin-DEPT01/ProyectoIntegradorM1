@@ -39,6 +39,63 @@ WHERE CANTIDAD_VENDIDA = (SELECT MAX(CANTIDAD_VENDIDA) FROM VENDEDORES_POR_PRODU
 ORDER BY CANTIDAD_TOTAL DESC;
 
 
+
+-- RESOLUCION DE LA CLASE:
+WITH productos_mas_vendidos AS (
+SELECT 
+	ProductID,
+    SUM(Quantity) cantidad_total
+FROM 
+	sales
+GROUP BY ProductID
+ORDER BY cantidad_total DESC
+LIMIT 5
+),
+ventas_por_vendedor_y_producto AS (
+SELECT
+	s.ProductID,
+    s.SalesPersonID,
+    SUM(s.Quantity) as cantidad_vendida,
+    CONCAT(e.FirstName, ' ', e.LastName) AS vendedor_nombre
+FROM
+	sales s
+JOIN
+	employees e
+ON
+	s.SalesPersonID = e.EmployeeID
+GROUP BY s.ProductID, s.SalesPersonID
+),
+top_vendedor_por_producto AS (
+SELECT
+	vvp.productID,
+    vvp.salespersonid,
+    vvp.vendedor_nombre,
+    vvp.cantidad_vendida
+FROM
+	ventas_por_vendedor_y_producto vvp
+JOIN (
+	SELECT
+		productID,
+        MAX(cantidad_vendida) AS max_vendida
+	FROM
+		ventas_por_vendedor_y_producto
+	GROUP BY ProductId
+    ) t1
+    ON vvp.ProductID = t1.ProductId AND vvp.cantidad_vendida = t1.max_vendida
+)
+SELECT
+	p.ProductID,
+    pr.ProductName,
+    p.cantidad_total,
+    t.salespersonid,
+    t.vendedor_nombre,
+    t.cantidad_vendida AS cantidad_vendida_por_vendedor
+FROM productos_mas_vendidos p
+JOIN products pr ON pr.ProductID = p.ProductID
+JOIN top_vendedor_por_producto t ON t.ProductID = p.ProductID
+ORDER BY p.cantidad_total DESC;
+
+
 -- OTRA FORMA
 /*
 SELECT RANK() OVER(ORDER BY CANTIDAD_TOTAL DESC) RANKING,
@@ -68,7 +125,15 @@ LIMIT 5
 TOTAL_CLIENTES AS (
 SELECT COUNT(DISTINCT CUSTOMERID) TOTAL_CLIENTES FROM CUSTOMERS
 )
-
+/*,
+CLIENTES_POR_PRODUCTO AS (
+SELECT S.PRODUCTID,
+COUNT(DISTINCT S.CUSTOMERID) AS CLIENTES_UNICOS,
+COUNT(DISTINCT S.CUSTOMERID) OVER(PARTITION BY PRODUCTID) AS TOTAL_CLINTES
+FROM SALES S
+WHERE S.PRODUCTID IN (SELECT PRODUCTID FROM PRODUCTOS_MAS_VENDIDOS)
+GROUP BY S.PRODUCTID
+)*/
 SELECT *, ROUND(CLIENTES_UNICOS/(SELECT TOTAL_CLIENTES FROM TOTAL_CLIENTES)*100,2) PROPORCION FROM 
 (
 SELECT  SL.PRODUCTID, COUNT(DISTINCT SL.CUSTOMERID) CLIENTES_UNICOS FROM sales SL
@@ -129,7 +194,8 @@ ORDER BY CATEGORYID, PRODUCTID
 
 SELECT *, ROUND((CANTIDAD_TOTAL_CAT_PROD/CANTIDAD_TOTAL_CATEGORIA)*100,2) PROPORCION FROM
 (
-SELECT *, SUM(CANTIDAD_TOTAL_CAT_PROD) OVER (PARTITION BY CATEGORYID) CANTIDAD_TOTAL_CATEGORIA  FROM VENTAS_POR_CATEGORIA
+SELECT *, SUM(CANTIDAD_TOTAL_CAT_PROD) OVER (PARTITION BY CATEGORYID) CANTIDAD_TOTAL_CATEGORIA  
+FROM VENTAS_POR_CATEGORIA
 ) AS SUB
 WHERE PRODUCTID IN (SELECT PRODUCTID FROM PRODUCTOS_MAS_VENDIDOS)
 ORDER BY CANTIDAD_TOTAL_CAT_PROD DESC;
