@@ -1,0 +1,181 @@
+USE sales_company;
+
+-- ¿Cuáles fueron los 5 productos más vendidos (por cantidad total), y cuál fue el vendedor que más unidades vendió de cada uno? 
+-- Una vez obtenga los resultados, en el análisis responde: ¿Hay algún vendedor que aparece más de una vez como el que más vendió un producto? 
+-- ¿Algunos de estos vendedores representan más del 10% de la ventas de este producto?
+
+
+WITH TOP5_PRODUCTOS_MAS_VENDIDOS AS (
+SELECT 
+	PRODUCTID,
+    SUM(QUANTITY) CANTIDAD_TOTAL 
+FROM 
+	SALES
+GROUP BY PRODUCTID
+ORDER BY CANTIDAD_TOTAL DESC
+LIMIT 5
+),
+VENTAS_POR_VENDEDOR_Y_PRODUCTO AS (
+SELECT 
+	PRODUCTID, 
+	SALESPERSONID, 
+    SUM(QUANTITY) CANTIDAD_VENDIDA 
+FROM 
+	SALES
+GROUP BY PRODUCTID, SALESPERSONID
+), 
+TOP_VENDEDORES_POR_PRODUCTO AS (
+SELECT 
+	VVP.PRODUCTID, 
+    VVP.SALESPERSONID, 
+    VVP.CANTIDAD_VENDIDA
+FROM 
+	VENTAS_POR_VENDEDOR_Y_PRODUCTO VVP
+INNER JOIN
+( 	SELECT 
+		PRODUCTID, 
+		MAX(CANTIDAD_VENDIDA) CANTIDAD_TOTAL_VENDIDA_PRODUCTO
+	FROM 
+		VENTAS_POR_VENDEDOR_Y_PRODUCTO
+	GROUP BY PRODUCTID) AS SUB
+ON 
+	VVP.PRODUCTID = SUB.PRODUCTID AND VVP.CANTIDAD_VENDIDA = SUB.CANTIDAD_TOTAL_VENDIDA_PRODUCTO
+)
+
+SELECT 
+	RANK() OVER(ORDER BY T5P.CANTIDAD_TOTAL DESC) RANKING,
+	T5P.PRODUCTID, 
+    P.PRODUCTNAME, 
+    T5P.CANTIDAD_TOTAL AS VENTAS_POR_PRODUCTO, 
+    TVP.SALESPERSONID, 
+	CONCAT(EM.FIRSTNAME,' ',EM.LASTNAME) AS NOMBRE_EMPLEADO,
+	TVP.CANTIDAD_VENDIDA AS VENTAS_POR_VENDEDOR,
+	ROUND((TVP.CANTIDAD_VENDIDA / T5P.CANTIDAD_TOTAL * 100),2) AS '%_VENTAS_VENDEDOR/PRODUCTO'
+FROM TOP5_PRODUCTOS_MAS_VENDIDOS T5P
+INNER JOIN TOP_VENDEDORES_POR_PRODUCTO TVP ON T5P.PRODUCTID = TVP.PRODUCTID
+INNER JOIN EMPLOYEES EM ON TVP.SALESPERSONID = EM.EMPLOYEEID
+INNER JOIN PRODUCTS P ON T5P.PRODUCTID = P.PRODUCTID
+ORDER BY VENTAS_POR_PRODUCTO DESC;
+
+-- ----------------------------------------------------------------------------------------------------------------------
+
+-- Entre los 5 productos más vendidos, ¿cuántos clientes únicos compraron cada uno y qué proporción representa sobre el total de clientes? 
+-- Analiza si ese porcentaje sugiere que el producto fue ampliamente adoptado entre los clientes o si, por el contrario, 
+-- fue comprado por un grupo reducido que generó un volumen alto de ventas. 
+-- Compara los porcentajes entre productos e identifica si alguno de ellos depende más de un segmento específico de clientes
+
+WITH TOP5_PRODUCTOS_MAS_VENDIDOS AS (
+SELECT 
+	PRODUCTID,
+    SUM(QUANTITY) CANTIDAD_TOTAL 
+FROM 
+	SALES
+GROUP BY PRODUCTID
+ORDER BY CANTIDAD_TOTAL DESC
+LIMIT 5
+),
+TOTAL_CLIENTES AS (
+SELECT 
+	COUNT(DISTINCT CUSTOMERID) TOTAL_CLIENTES 
+FROM 
+	CUSTOMERS
+),
+CLIENTES_UNICOS_POR_PRODUCTO AS (
+SELECT 
+	PRODUCTID, 
+    COUNT(DISTINCT CUSTOMERID) AS CANTIDAD_CLIENTES 
+FROM 
+	SALES
+GROUP BY PRODUCTID
+)
+
+SELECT 
+	*, 
+	ROUND(CLIENTES_UNICOS/TOTAL_CLIENTES * 100,2) '%_CLIENTES'
+FROM
+(
+	SELECT 
+		T5P.PRODUCTID,
+		P.PRODUCTNAME,
+		CUP.CANTIDAD_CLIENTES AS CLIENTES_UNICOS,
+		(SELECT TOTAL_CLIENTES FROM TOTAL_CLIENTES) AS TOTAL_CLIENTES
+	FROM TOP5_PRODUCTOS_MAS_VENDIDOS T5P
+	INNER JOIN CLIENTES_UNICOS_POR_PRODUCTO CUP 
+	ON T5P.PRODUCTID = CUP.PRODUCTID
+	INNER JOIN PRODUCTS P ON T5P.PRODUCTID = P.PRODUCTID
+) AS SUB
+ORDER BY CLIENTES_UNICOS DESC;
+
+-- ----------------------------------------------------------------------------------------------------------------------
+
+-- ¿A qué categorías pertenecen los 5 productos más vendidos y qué proporción representan dentro del total de unidades vendidas de su categoría? 
+-- Utiliza funciones de ventana para comparar la relevancia de cada producto dentro de su propia categoría.
+
+WITH VENTAS_POR_PRODUCTO_Y_CATEGORIA AS(
+SELECT 
+	PR.CATEGORYID,
+    C.CATEGORYNAME,
+	SL.PRODUCTID,
+    PR.PRODUCTNAME,
+    SUM(QUANTITY) TOTAL_PRODUCTO 
+FROM 
+	PRODUCTS PR
+INNER JOIN SALES SL ON PR.PRODUCTID = SL.PRODUCTID
+INNER JOIN CATEGORIES C ON PR.CATEGORYID = C.CATEGORYID
+GROUP BY CATEGORYID, PRODUCTID
+),
+VENTAS_CON_TOTAL_POR_CATEGORIA AS (
+SELECT
+	CATEGORYID,
+    CATEGORYNAME,
+	PRODUCTID,
+    PRODUCTNAME,
+    TOTAL_PRODUCTO,
+    SUM(TOTAL_PRODUCTO) OVER(PARTITION BY CATEGORYID) TOTAL_CATEGORIA
+FROM 
+	VENTAS_POR_PRODUCTO_Y_CATEGORIA
+)
+
+SELECT
+	RANK() OVER(ORDER BY TOTAL_PRODUCTO DESC) AS RANKING,
+	CATEGORYID,
+    CATEGORYNAME,
+	PRODUCTID,
+    PRODUCTNAME,
+    TOTAL_PRODUCTO,
+    TOTAL_CATEGORIA,
+    ROUND((TOTAL_PRODUCTO/TOTAL_CATEGORIA * 100), 2) AS '%_PRODUCTO_SOBRE_SU_CATEGORIA'
+FROM
+	VENTAS_CON_TOTAL_POR_CATEGORIA
+ORDER BY TOTAL_PRODUCTO DESC
+LIMIT 5;
+
+-- ----------------------------------------------------------------------------------------------------------------------
+
+-- ¿Cuáles son los 10 productos con mayor cantidad de unidades vendidas en todo el catálogo y cuál es su posición dentro de su propia categoría? 
+-- Utiliza funciones de ventana para identificar el ranking de cada producto en su categoría. 
+-- Luego, analiza si estos productos son también los líderes dentro de sus categorías o si compiten estrechamente con otros productos de alto rendimiento. 
+-- ¿Qué observas sobre la concentración de ventas dentro de algunas categorías?
+
+WITH VENTAS_POR_PRODUCTO_Y_CATEGORIA AS(
+SELECT 
+	PR.CATEGORYID,
+    C.CATEGORYNAME,
+	SL.PRODUCTID,
+    PR.PRODUCTNAME,
+    SUM(QUANTITY) TOTAL_PRODUCTO 
+FROM 
+	PRODUCTS PR
+INNER JOIN SALES SL ON PR.PRODUCTID = SL.PRODUCTID
+INNER JOIN CATEGORIES C ON PR.CATEGORYID = C.CATEGORYID
+GROUP BY CATEGORYID, PRODUCTID
+)
+
+SELECT 
+RANK() OVER (ORDER BY TOTAL_PRODUCTO DESC) RANKING_PRODUCTO,
+CATEGORYID,CATEGORYNAME,PRODUCTID,PRODUCTNAME,TOTAL_PRODUCTO,
+RANK() OVER (PARTITION BY CATEGORYID ORDER BY TOTAL_PRODUCTO DESC) RANKING_EN_SU_CATEGORIA
+FROM VENTAS_POR_PRODUCTO_Y_CATEGORIA
+ORDER BY TOTAL_PRODUCTO DESC
+LIMIT 10;
+
