@@ -4,6 +4,7 @@
 
 La estructura general del repositorio es la siguiente:
 
+```
 ProyectoIntegradorM1/
 │
 ├── data/                     # Conjunto de datos en formato .csv
@@ -22,7 +23,8 @@ ProyectoIntegradorM1/
 │   └── reporte_avance_3.ipynb
 │
 └── README.md                 # Documentación del proyecto
-
+```
+Test
 ```
 📦 ProyectoIntegradorM1
 ├─ data
