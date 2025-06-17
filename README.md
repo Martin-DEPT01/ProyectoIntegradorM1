@@ -23,6 +23,24 @@ ProyectoIntegradorM1/
 │
 └── README.md                 # Documentación del proyecto
 
+```
+📦 ProyectoIntegradorM1
+├─ data
+│  └─ [arvhivos.csv]
+├─ sql
+│  ├─ query_progress
+│  │  ├─ avance_1.sql
+│  │  └─ avance_2.sql
+│  └─ load
+│     ├─ carga_datos.sql
+│     └─ creacion_tablas.sql
+├─ reports
+│  ├─ reporte_avance_1.docx
+│  ├─ reporte_avance_2.docx
+│  └─ reporte_avance_3.ipynb
+└─ README.md
+```
+
 Cada carpeta está organizada para facilitar el desarrollo, la colaboración y el seguimiento del flujo de trabajo.
 
 ---
