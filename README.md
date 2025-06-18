@@ -4,7 +4,7 @@
 
 La estructura general del repositorio es la siguiente:
 
-
+```
 📦ProyectoIntegradorM1/
 │
 ├── [📁 data/](./data/)                     # Conjunto de datos en formato .csv
@@ -14,7 +14,7 @@ La estructura general del repositorio es la siguiente:
 │      │
 │      ├── 📁 query_progress/       # Consultas realizadas en distintos avances del proyecto
 │      │      ├── avance_1.sql
-│      │      └── avance2.sql
+│      │      └── avance_2.sql
 │      │
 │      └── 📁 load/                 # Scripts para carga y creación de estructuras
 │             ├── carga_datos.sql
@@ -26,9 +26,36 @@ La estructura general del repositorio es la siguiente:
 │      └── reporte_avance_3.ipynb
 │
 └── 📝 README.md                  # Documentación del proyecto
+```
+
+<pre>
+<code>
+📦ProyectoIntegradorM1/
+│
+├── 📁 <a href="./data/">data/</a>                     # Conjunto de datos en formato .csv
+│      └─ [archivos.csv]
+│
+├── 📁 <a href="./sql/">sql/</a>                      # Consultas y scripts SQL organizados
+│      │
+│      ├── 📁 <a href="./sql/query_progress/">query_progress/</a>       # Consultas realizadas en distintos avances del proyecto
+│      │      ├── avance_1.sql
+│      │      └── avance_2.sql
+│      │
+│      └── 📁 <a href="./sql/load/">load/</a>                 # Scripts para carga y creación de estructuras
+│             ├── carga_datos.sql
+│             └── creacion_tablas.sql
+│
+├── 📁 <a href="./reports/">reports/</a>                   # Reportes escritos y en notebook
+│      ├── reporte_avance_1.docx
+│      ├── reporte_avance_2.docx
+│      └── reporte_avance_3.ipynb
+│
+└── 📝 README.md                  # Documentación del proyecto
+<code>
+</pre>
 
 
-TEST:
+TEST2:
 
 📦 ProyectoIntegradorM1/
 │
@@ -38,7 +65,7 @@ TEST:
 ├── [📁 sql/](./sql/)                      # Consultas y scripts SQL organizados
 │   ├── [📁 query_progress/](./sql/query_progress/)
 │   │   ├── [avance_1.sql](./sql/query_progress/avance_1.sql)
-│   │   └── [avance2.sql](./sql/query_progress/avance2.sql)
+│   │   └── [avance_2.sql](./sql/query_progress/avance2.sql)
 │   └── [📁 load/](./sql/load/)
 │       ├── [carga_datos.sql](./sql/load/carga_datos.sql)
 │       └── [creacion_tablas.sql](./sql/load/creacion_tablas.sql)
@@ -49,7 +76,6 @@ TEST:
 │   └── [reporte_avance_3.ipynb](./reports/reporte_avance_3.ipynb)
 │
 └── 📝 README.md
-
 
 Cada carpeta está organizada para facilitar el desarrollo, la colaboración y el seguimiento del flujo de trabajo.
 
