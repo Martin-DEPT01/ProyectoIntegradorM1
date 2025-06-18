@@ -7,7 +7,7 @@ La estructura general del repositorio es la siguiente:
 ```
 📦ProyectoIntegradorM1/
 │
-├── 📁 data/                     # Conjunto de datos en formato .csv
+├── [📁 data/](./data)                     # Conjunto de datos en formato .csv
 │      └─ [arvhivos.csv]
 │
 ├── 📁 sql/                      # Consultas y scripts SQL organizados
@@ -25,7 +25,7 @@ La estructura general del repositorio es la siguiente:
 │      ├── reporte_avance_2.docx
 │      └── reporte_avance_3.ipynb
 │
-└── 📝 README.md                   # Documentación del proyecto
+└── 📝 README.md                  # Documentación del proyecto
 ```
 Cada carpeta está organizada para facilitar el desarrollo, la colaboración y el seguimiento del flujo de trabajo.
 
