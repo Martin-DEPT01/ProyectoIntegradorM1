@@ -4,42 +4,42 @@
 
 La estructura general del repositorio es la siguiente:
 
-```
+```📁
 ProyectoIntegradorM1/
 │
-├── data/                     # Conjunto de datos en formato .csv
+├── 📁 data/                     # Conjunto de datos en formato .csv
 │
-├── sql/                      # Consultas y scripts SQL organizados
-│   ├── query_progress/       # Consultas realizadas en distintos avances del proyecto
-│   │   ├── avance_1.sql
-│   │   └── avance2.sql
-│   └── load/                 # Scripts para carga y creación de estructuras
-│       ├── carga_datos.sql
-│       └── creacion_tablas.sql
+├── 📁 sql/                      # Consultas y scripts SQL organizados
+│      ├── 📁 query_progress/       # Consultas realizadas en distintos avances del proyecto
+│      │   ├── avance_1.sql
+│      │   └── avance2.sql
+│      └── 📁 load/                 # Scripts para carga y creación de estructuras
+│          ├── carga_datos.sql
+│          └── creacion_tablas.sql
 │
-├── reposrts/                 # Reportes escritos y en notebook
-│   ├── reporte_avance_1.docx
-│   ├── reporte_avance_2.docx
-│   └── reporte_avance_3.ipynb
+├── 📁 reposrts/                 # Reportes escritos y en notebook
+│      ├── reporte_avance_1.docx
+│      ├── reporte_avance_2.docx
+│      └── reporte_avance_3.ipynb
 │
 └── README.md                 # Documentación del proyecto
 ```
 Test
 ```
 📦 ProyectoIntegradorM1
-├─ data
-│  └─ [arvhivos.csv]
-├─ sql
-│  ├─ query_progress
-│  │  ├─ avance_1.sql
-│  │  └─ avance_2.sql
-│  └─ load
-│     ├─ carga_datos.sql
-│     └─ creacion_tablas.sql
-├─ reports
-│  ├─ reporte_avance_1.docx
-│  ├─ reporte_avance_2.docx
-│  └─ reporte_avance_3.ipynb
+├─ 📁 data
+│     └─ [arvhivos.csv]
+├─ 📁 sql
+│     ├─ 📁 query_progress
+│     │     ├─ avance_1.sql
+│     │     └─ avance_2.sql
+│     └─ 📁 load
+│        ├─ carga_datos.sql
+│        └─ creacion_tablas.sql
+├─ 📁 reports
+│     ├─ reporte_avance_1.docx
+│     ├─ reporte_avance_2.docx
+│     └─ reporte_avance_3.ipynb
 └─ README.md
 ```
 
