@@ -30,7 +30,7 @@ La estructura general del repositorio es la siguiente:
 
 Cada carpeta está organizada para facilitar el desarrollo, la colaboración y el seguimiento del flujo de trabajo.
 
-🔗 Enlaces útiles:
+### 🔗 Enlaces útiles:
 - [data/](./data/)
 - [sql/query_progress/](./sql/query_progress/)
 - [sql/load/](./sql/load/)
