@@ -4,29 +4,7 @@
 
 La estructura general del repositorio es la siguiente:
 
-```
-📦ProyectoIntegradorM1/
-│
-├── [📁 data/](./data/)                     # Conjunto de datos en formato .csv
-│      └─ [archivos.csv]
-│
-├── 📁 sql/                      # Consultas y scripts SQL organizados
-│      │
-│      ├── 📁 query_progress/       # Consultas realizadas en distintos avances del proyecto
-│      │      ├── avance_1.sql
-│      │      └── avance_2.sql
-│      │
-│      └── 📁 load/                 # Scripts para carga y creación de estructuras
-│             ├── carga_datos.sql
-│             └── creacion_tablas.sql
-│
-├── 📁 reports/                   # Reportes escritos y en notebook
-│      ├── reporte_avance_1.docx
-│      ├── reporte_avance_2.docx
-│      └── reporte_avance_3.ipynb
-│
-└── 📝 README.md                  # Documentación del proyecto
-```
+
 
 TEST2:
 
@@ -50,32 +28,6 @@ TEST2:
 │
 └── 📝 README.md
 
-
-<pre>
-<code>
-📦ProyectoIntegradorM1/
-│
-├── 📁 <a href="./data/">data/</a>                     # Conjunto de datos en formato .csv
-│      └─ [archivos.csv]
-│
-├── 📁 <a href="./sql/">sql/</a>                      # Consultas y scripts SQL organizados
-│      │
-│      ├── 📁 <a href="./sql/query_progress/">query_progress/</a>       # Consultas realizadas en distintos avances del proyecto
-│      │      ├── avance_1.sql
-│      │      └── avance_2.sql
-│      │
-│      └── 📁 <a href="./sql/load/">load/</a>                 # Scripts para carga y creación de estructuras
-│             ├── carga_datos.sql
-│             └── creacion_tablas.sql
-│
-├── 📁 <a href="./reports/">reports/</a>                   # Reportes escritos y en notebook
-│      ├── reporte_avance_1.docx
-│      ├── reporte_avance_2.docx
-│      └── reporte_avance_3.ipynb
-│
-└── 📝 README.md                  # Documentación del proyecto
-</code>
-</pre>
 
 Cada carpeta está organizada para facilitar el desarrollo, la colaboración y el seguimiento del flujo de trabajo.
 
