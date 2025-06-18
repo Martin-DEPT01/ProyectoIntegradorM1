@@ -7,8 +7,8 @@ La estructura general del repositorio es la siguiente:
 ```
 📦ProyectoIntegradorM1/
 │
-├── 📁 [data/](./data/)                     # Conjunto de datos en formato .csv
-│      └─ [arvhivos.csv]
+├── [📁 data/](./data/)                     # Conjunto de datos en formato .csv
+│      └─ [archivos.csv]
 │
 ├── 📁 sql/                      # Consultas y scripts SQL organizados
 │      │
