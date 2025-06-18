@@ -31,6 +31,27 @@ TEST2:
 
 Cada carpeta está organizada para facilitar el desarrollo, la colaboración y el seguimiento del flujo de trabajo.
 
+
+📦 [ProyectoIntegradorM1](.)
+
+├── [📁 data](./data/) — Datos en formato `.csv`  
+│   └── [archivo.csv](./data/archivo.csv)
+
+├── [📁 sql](./sql/) — Consultas y scripts SQL  
+│   ├── [📁 query_progress](./sql/query_progress/)  
+│   │   ├── [avance_1.sql](./sql/query_progress/avance_1.sql)  
+│   │   └── [avance2.sql](./sql/query_progress/avance2.sql)  
+│   └── [📁 load](./sql/load/)  
+│       ├── [carga_datos.sql](./sql/load/carga_datos.sql)  
+│       └── [creacion_tablas.sql](./sql/load/creacion_tablas.sql)
+
+├── [📁 reports](./reports/) — Reportes y notebooks  
+│   ├── [reporte_avance_1.docx](./reports/reporte_avance_1.docx)  
+│   ├── [reporte_avance_2.docx](./reports/reporte_avance_2.docx)  
+│   └── [reporte_avance_3.ipynb](./reports/reporte_avance_3.ipynb)
+
+└── 📝 README.md — Documentación del proyecto
+
 ---
 
 ## 🎯 Objetivos
