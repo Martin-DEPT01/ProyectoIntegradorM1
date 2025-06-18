@@ -4,45 +4,29 @@
 
 La estructura general del repositorio es la siguiente:
 
-```📁
-ProyectoIntegradorM1/
+```
+📦ProyectoIntegradorM1/
 │
 ├── 📁 data/                     # Conjunto de datos en formato .csv
+│      └─ [arvhivos.csv]
 │
 ├── 📁 sql/                      # Consultas y scripts SQL organizados
+│      │
 │      ├── 📁 query_progress/       # Consultas realizadas en distintos avances del proyecto
-│      │   ├── avance_1.sql
-│      │   └── avance2.sql
+│      │      ├── avance_1.sql
+│      │      └── avance2.sql
+│      │
 │      └── 📁 load/                 # Scripts para carga y creación de estructuras
-│          ├── carga_datos.sql
-│          └── creacion_tablas.sql
+│             ├── carga_datos.sql
+│             └── creacion_tablas.sql
 │
-├── 📁 reposrts/                 # Reportes escritos y en notebook
+├── 📁 reports/                   # Reportes escritos y en notebook
 │      ├── reporte_avance_1.docx
 │      ├── reporte_avance_2.docx
 │      └── reporte_avance_3.ipynb
 │
-└── README.md                 # Documentación del proyecto
+└── README.md                     # Documentación del proyecto
 ```
-Test
-```
-📦 ProyectoIntegradorM1
-├─ 📁 data
-│     └─ [arvhivos.csv]
-├─ 📁 sql
-│     ├─ 📁 query_progress
-│     │     ├─ avance_1.sql
-│     │     └─ avance_2.sql
-│     └─ 📁 load
-│        ├─ carga_datos.sql
-│        └─ creacion_tablas.sql
-├─ 📁 reports
-│     ├─ reporte_avance_1.docx
-│     ├─ reporte_avance_2.docx
-│     └─ reporte_avance_3.ipynb
-└─ README.md
-```
-
 Cada carpeta está organizada para facilitar el desarrollo, la colaboración y el seguimiento del flujo de trabajo.
 
 ---
@@ -69,7 +53,6 @@ Este proyecto fue desarrollado utilizando las siguientes tecnologías y herramie
   - `pandas`
   - `matplotlib` / `seaborn`
   - `scikit-learn`
-  - `jupyter`
 - **Entorno de desarrollo**:
   - Jupyter Notebook
   - Visual Studio Code
